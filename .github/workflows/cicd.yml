@@ -1,0 +1,47 @@
+
+
+name: Testing Multiple MySQL Servers
+
+on:
+  push:
+    branches:
+      - "*"
+jobs:
+  test:
+    runs-on: ubuntu-22.04
+
+    # Server 1
+    - uses: shogo82148/actions-setup-mysql@v1
+      with:
+        mysql-version: '8'
+        root-password: 'root'
+        my-cnf: |
+          sql_mode=NO_ENGINE_SUBSTITUTION
+          performance_schema=OFF
+          port=3307
+
+    # Server 2
+    - uses: shogo82148/actions-setup-mysql@v1
+      with:
+        mysql-version: '8'
+        root-password: 'root'
+        my-cnf: |
+          sql_mode=NO_ENGINE_SUBSTITUTION
+          performance_schema=OFF
+          port=3308
+
+    # Server 3
+    - uses: shogo82148/actions-setup-mysql@v1
+      with:
+        mysql-version: '8'
+        root-password: 'root'
+        my-cnf: |
+          sql_mode=NO_ENGINE_SUBSTITUTION
+          performance_schema=OFF
+          port=3309
+
+    - name: Test Connections
+      run: |
+        mysql -uroot -proot -h127.0.0.1 -P3307 --execute="SELECT version()"
+        mysql -uroot -proot -h127.0.0.1 -P3308 --execute="SELECT version()"
+        mysql -uroot -proot -h127.0.0.1 -P3309 --execute="SELECT version()"
